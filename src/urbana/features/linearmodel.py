@@ -215,6 +215,8 @@ def LinearModel(YEAR, MONTH, VARIABLE_TO_PREDICT):
 
 
     X_Age = X.filter(regex="^Percentage_Age_")
+    print("line 223")
+    print(X_Age)
     kbest_Age = SelectKBest(f_regression, k=K_AGE).fit(
         preprocessor.fit_transform(X_Age),
         pt.fit_transform(y.values.reshape(-1, 1)),

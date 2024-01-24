@@ -363,16 +363,14 @@ def DataMaker(YEAR, MONTH):
 
 
     table_gender = pd.read_html(
-        "https://www.bcn.cat/estadistica/castella/dades/tpob/pad/padro/a"
-        + str(YEAR)
-        + "/sexe/sexe05.htm",
+        f"https://ajuntament.barcelona.cat/estadistica/castella/Estadistiques_per_temes/Poblacio_i_demografia/Poblacio/Xifres_oficials_poblacio/a{YEAR}/sexe/sc.htm",
         thousands=".",
     )
 
     gender = table_gender[0]
     gender.columns = gender.loc[4]
     gender.drop(
-        labels=[0, 1, 2, 3, 4, 5, 6, 7, 8, 1077, 1078, 1079, 1080], axis=0, inplace=True
+        labels=[0, 1, 2, 3, 4, 5, 6, 7, 8, 1077, 1078, 1079, 1080, 1081, 1082], axis=0, inplace=True
     )
     gender = gender.loc[:, ~gender.columns.duplicated()]
     gender[["N_district", "N_section"]] = (
@@ -412,16 +410,14 @@ def DataMaker(YEAR, MONTH):
 
 
     table_age = pd.read_html(
-        "https://www.bcn.cat/estadistica/castella/dades/tpob/pad/padro/a"
-        + str(YEAR)
-        + "/edat/edatg11.htm",
+        f"https://ajuntament.barcelona.cat/estadistica/castella/Estadistiques_per_temes/Poblacio_i_demografia/Poblacio/Xifres_oficials_poblacio/a{YEAR}/edat/edata11.htm",
         thousands=".",
     )
 
     age = table_age[0]
     age.columns = age.loc[4]
     age.drop(
-        labels=[0, 1, 2, 3, 4, 5, 6, 7, 8, 1077, 1078, 1079, 1080], axis=0, inplace=True
+        labels=[0, 1, 2, 3, 4, 5, 6, 7, 8, 1077, 1078, 1079, 1080, 1081, 1082], axis=0, inplace=True
     )
     age = age.loc[:, ~age.columns.duplicated()]
     age[["N_district", "N_section"]] = (
@@ -434,19 +430,46 @@ def DataMaker(YEAR, MONTH):
 
     age.set_index("Tag", inplace=True)
 
-    age.rename(
-        {
-            "0-14 años": "Percentage_Age_0_14",
-            "15-24 años": "Percentage_Age_15_24",
-            "25-39 años": "Percentage_Age_25_39",
-            "40-64 años": "Percentage_Age_40_64",
-            "65 años y más": "Percentage_Age_65_Plus",
-        },
+    # age.rename(
+    #     {
+    #         "0-14 años": "Percentage_Age_0_14",
+    #         "15-24 años": "Percentage_Age_15_24",
+    #         "25-39 años": "Percentage_Age_25_39",
+    #         "40-64 años": "Percentage_Age_40_64",
+    #         "65 años y más": "Percentage_Age_65_Plus",
+    #     },
+    #     axis=1,
+    #     inplace=True,
+    # )
+
+    regex_0_14 = "(1[0-4] año[s]?)|([0-9] año[s]?)"
+    regex_15_24 = "(1[5-9] año[s]?)|(2[0-4] año[s]?)"
+    regex_25_39 = "(2[5-9] año[s]?)|(3[0-9] año[s]?)"
+    regex_40_64 = "([4-5][0-9] año[s]?)|(6[0-4] año[s]?)"
+    regex_65_Plus = "(6[5-9] años)|([7-9][0-9] años)"
+
+    age["Percentage_Age_0_14"] = (
+        age[age.columns[age.columns.str.fullmatch(regex_0_14)]].astype(int).sum(axis=1)
+    )
+    age["Percentage_Age_15_24"] = (
+        age[age.columns[age.columns.str.fullmatch(regex_15_24)]].astype(int).sum(axis=1)
+    )
+    age["Percentage_Age_25_39"] = (
+        age[age.columns[age.columns.str.fullmatch(regex_25_39)]].astype(int).sum(axis=1)
+    )
+    age["Percentage_Age_40_64"] = (
+        age[age.columns[age.columns.str.fullmatch(regex_40_64)]].astype(int).sum(axis=1)
+    )
+    age["Percentage_Age_65_Plus"] = (
+        age[age.columns[age.columns.str.contains(regex_65_Plus)]].astype(int).sum(axis=1)
+    )
+
+    age.drop(
+        ["Dto. SC", "N_district", "N_section"]
+        + list(age.columns[age.columns.str.contains("año")]),
         axis=1,
         inplace=True,
     )
-
-    age.drop(["Dto. SC", "N_district", "N_section"], axis=1, inplace=True)
 
     for col in reversed(age.columns):
         age[col] = age[col].astype("int").div(age["TOTAL"].astype("int"))
@@ -468,10 +491,8 @@ def DataMaker(YEAR, MONTH):
 
 
 
-    table_household = pd.read_html(
-        "https://www.bcn.cat/estadistica/castella/dades/tpob/pad/padro/a"
-        + str(YEAR)
-        + "/llars/ocu04.htm",
+    table_household = pd.read_html(   
+        f"https://ajuntament.barcelona.cat/estadistica/castella/Estadistiques_per_temes/Poblacio_i_demografia/Llars_i_domicilis/Domicilis_padronals/a{YEAR}/persones/ocu04.htm",
         thousands=".",
         decimal=",",
     )
@@ -479,7 +500,7 @@ def DataMaker(YEAR, MONTH):
     household = table_household[0]
     household.columns = household.loc[4]
     household.drop(
-        labels=[0, 1, 2, 3, 4, 5, 6, 7, 8, 1077, 1078, 1079, 1080], axis=0, inplace=True
+        labels=[0, 1, 2, 3, 4, 5, 6, 7, 8, 1077, 1078, 1079, 1080, 1081], axis=0, inplace=True
     )
     household = household.loc[:, ~household.columns.duplicated()]
     household[["N_district", "N_section"]] = (
@@ -532,9 +553,7 @@ def DataMaker(YEAR, MONTH):
 
 
     table_education = pd.read_html(
-        "https://www.bcn.cat/estadistica/castella/dades/tpob/pad/padro/a"
-        + str(YEAR)
-        + "/nivi/nivi11.htm",
+        f"https://ajuntament.barcelona.cat/estadistica/castella/Estadistiques_per_temes/Poblacio_i_demografia/Poblacio/Padro_municipal_habitants/a{YEAR}/nivi/nivi11.htm",
         thousands=".",
     )
 
@@ -600,9 +619,7 @@ def DataMaker(YEAR, MONTH):
 
 
     table_nationality = pd.read_html(
-        "https://www.bcn.cat/estadistica/castella/dades/tpob/pad/padro/a"
-        + str(YEAR)
-        + "/nacio/nacio11.htm",
+        f"https://ajuntament.barcelona.cat/estadistica/castella/Estadistiques_per_temes/Poblacio_i_demografia/Poblacio/Padro_municipal_habitants/a{YEAR}/nacio/nacio11.htm",
         thousands=".",
         decimal=",",
     )

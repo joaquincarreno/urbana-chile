@@ -80,7 +80,7 @@ def GWRModel(YEAR, MONTH, VARIABLE_TO_PREDICT):
         axis=1,
         inplace=True,
     )
-    sect.drop(["Percentage_Age_25_39"], axis=1, inplace=True)  # Duplicate
+    # sect.drop(["Percentage_Age_25_39"], axis=1, inplace=True)  # Duplicate
 
 
     geo_info = gpd.read_file(
@@ -233,7 +233,7 @@ def GWRModel(YEAR, MONTH, VARIABLE_TO_PREDICT):
         myColor = "white" if lightness < 0.7 else "black"
         lineColor = "black" if lightness < 0.7 else "white"
         ax.set_facecolor(facecolor)
-        sns.regplot(x, y, ax=ax, color=myColor, line_kws={"color": lineColor}, ci=None)
+        sns.regplot(x=x, y=y, ax=ax, color=myColor, line_kws={"color": lineColor}, ci=None)
 
 
     g = sns.PairGrid(pd.DataFrame(X_transformed, columns=X_chosen.columns))
