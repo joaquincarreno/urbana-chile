@@ -60,11 +60,11 @@ def colorbar(ax, collection, orientation='vertical', percent=3, **cbar_kws):
     cbar.set_label(label)
     return cbar
 
-def choropleth(geodf, figsize=12, column=None, scheme='fisher_jenks', 
+def choropleth(geodf, figsize=12, column=None, scheme='fisher_jenks',
                    user_bins=None,
                    n_colors=5, palette='viridis', alpha=0.75, cbar_orientation='vertical',
                    img_interpolation='hanning', cbar_fig_position=None, cbar_label=None, z=None, cbar_kws=None):
-        
+
     bounds = geodf.total_bounds
     aspect = (bounds[2] - bounds[0]) / (bounds[3] - bounds[1])
     fig = plt.figure(figsize=(figsize, figsize / aspect))
@@ -73,14 +73,14 @@ def choropleth(geodf, figsize=12, column=None, scheme='fisher_jenks',
     ax.set_xlim(bounds[0], bounds[2])
     ax.set_ylim(bounds[1], bounds[3])
     ax.set_aspect(1)
-    
+
     plt.axis('off')
-    
+
     cbar_kws = cbar_kws if cbar_kws else {}
-    
+
     choro = []
     patch_values = []
-        
+
     for idx, row in geodf.iterrows():
         feature = row.geometry
         value = row[column]
@@ -105,14 +105,14 @@ def choropleth(geodf, figsize=12, column=None, scheme='fisher_jenks',
     cmap, norm = from_levels_and_colors(bins, palette_values, extend='neither')
     cmap.set_over(palette_values[-1], alpha=alpha)
 
-    collection = PatchCollection(choro, linewidth=1, edgecolor='white', alpha=alpha, cmap=cmap, norm=norm)    
+    collection = PatchCollection(choro, linewidth=1, edgecolor='white', alpha=alpha, cmap=cmap, norm=norm)
     collection.set_array(np.array(patch_values))
 
     cbar_label = cbar_label if cbar_label is not None else column
 
     cbar_kws = dict(shrink=0.5, label=cbar_label, ticks=bins)
-    colorbar(ax, collection, orientation=cbar_orientation, **cbar_kws)        
-        
+    colorbar(ax, collection, orientation=cbar_orientation, **cbar_kws)
+
     ax.add_collection(collection)
     plt.tight_layout()
     return ax
