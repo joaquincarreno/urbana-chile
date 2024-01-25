@@ -26,6 +26,7 @@ dependencies:
   - sphinx_rtd_theme
   - urbanaccess  
   - yellowbrick
+  - pyrosm
 # jupyter lab/notebook tools
   - ipykernel
   - nb_black

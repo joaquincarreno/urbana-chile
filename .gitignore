@@ -131,6 +131,6 @@ dmypy.json
 
 
 
-# Ignore resulting data until project is finished:
+# Ignore data:
 
-data/processed/
+data/
