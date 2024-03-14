@@ -1,5 +1,6 @@
 name: urbana
 channels:
+  - conda-forge
   - defaults
 dependencies:
   - black
@@ -32,4 +33,3 @@ dependencies:
   - pyrosm
   - conda-tree
   - html5lib
-prefix: /home/flac/miniconda3/envs/urbana
