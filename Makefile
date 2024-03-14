@@ -10,7 +10,7 @@ PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 PROFILE = default
 PROJECT_NAME = urbana
 PACKAGE_NAME = urbana
-ENV_NAME = urbana
+ENV_NAME = urbana-chile
 SRC_CODE_FOLDER = src/urbana
 PYTHON_INTERPRETER = python
 CURRENT_ENV := $(CONDA_DEFAULT_ENV)
@@ -78,6 +78,10 @@ ifeq (True,$(HAS_CONDA))
 else
 	@printf ">>> conda command not found. Check out that conda has been installed properly."
 endif
+
+## remove build from environment.yml
+conda-remove-build-from-environment-yml:
+	@sed -E -e "s|(\s+\-\s+\S+=\S+)(=.*)|\1|" environment.yml
 
 ## Activate pre-commit
 install-pre-commit:

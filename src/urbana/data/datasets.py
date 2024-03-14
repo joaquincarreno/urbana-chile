@@ -1,5 +1,7 @@
 """Tools to handle with datasets."""
 
+from urllib.request import urlretrieve
+
 import pandas as pd
 
 from urbana.constants import DIR_DATA_RAW
@@ -60,9 +62,17 @@ def get_insideairbnb_data(year: int, month: int, day: int) -> pd.DataFrame:
     Returns:
         pd.DataFrame: dataframe loaded from insideairbnb
     """
-    insideairbnb_filename = f"{year}-{month:02}-{day:02}.csv"
+    insideairbnb_filename_full_path = (
+        DIR_DATA_RAW / "inside_airbnb" / f"listings_{year}-{month:02}.csv"
+    )
+    insideairbnb_filename_full_path.parent.mkdir(parents=True, exist_ok=True)
     try:
-        df = pd.read_csv(DIR_DATA_RAW / "insideairbnb" / insideairbnb_filename)
+        df = pd.read_csv(insideairbnb_filename_full_path)
     except FileNotFoundError:
-        df = get_insideairbnb_data_from_url(year, month, day)
+        airbnb_url = (
+            f"http://data.insideairbnb.com/spain/catalonia/barcelona/{year}-{month:02}-{day:02}"
+            "/data/listings.csv"
+        )
+        path, header = urlretrieve(airbnb_url, filename=insideairbnb_filename_full_path)
+        df = pd.read_csv(path)
     return df

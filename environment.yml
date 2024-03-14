@@ -1,4 +1,3 @@
-name: urbana
 channels:
   - conda-forge
   - defaults
@@ -11,11 +10,14 @@ dependencies:
   - ipykernel
   - isort
   - lxml
-  - missingno
+  - multimethod[version='<=1.9.1']
   - mypy
   - nb_black
   - openpyxl
   - pandana
+  - pandera-geopandas
+  - pandera-io
+  - pandas
   - pandas-profiling[version='>=2.0']
   - pre-commit
   - pysal
@@ -33,3 +35,6 @@ dependencies:
   - pyrosm
   - conda-tree
   - html5lib
+  - pip
+  - pip:
+    - missingno
